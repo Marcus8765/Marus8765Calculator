@@ -1,0 +1,109 @@
+// calculator.js
+// Simple JavaScript calculator that loops using prompt() dialogs,
+// builds a results table row-by-row, then a summary table.
+ 
+var validResults = []; // stores only the numeric results of successful calculations
+var keepGoing = true;
+ 
+// Start the results table
+document.write("<table>");
+document.write("<tr><th>Number 1</th><th>Operator</th><th>Number 2</th><th>Result</th></tr>");
+ 
+while (keepGoing) {
+  var xInput = prompt("Enter the first number (x):");
+  if (xInput === null) {
+    keepGoing = false;
+    break;
+  }
+ 
+  var yInput = prompt("Enter the second number (y):");
+  if (yInput === null) {
+    keepGoing = false;
+    break;
+  }
+ 
+  var operator = prompt("Enter an operator (+, -, *, /, %):");
+  if (operator === null) {
+    keepGoing = false;
+    break;
+  }
+ 
+  var x = Number(xInput);
+  var y = Number(yInput);
+  var result;
+  var isError = false;
+ 
+  // Validate numeric input
+  if (isNaN(x) || isNaN(y)) {
+    result = "<span class='error'>Error: x and/or y is not a number</span>";
+    isError = true;
+  } else {
+    // Validate operator and compute result
+    switch (operator) {
+      case "+":
+        result = x + y;
+        break;
+      case "-":
+        result = x - y;
+        break;
+      case "*":
+        result = x * y;
+        break;
+      case "/":
+        if (y === 0) {
+          result = "<span class='error'>Error: division by zero</span>";
+          isError = true;
+        } else {
+          result = x / y;
+        }
+        break;
+      case "%":
+        if (y === 0) {
+          result = "<span class='error'>Error: modulus by zero</span>";
+          isError = true;
+        } else {
+          result = x % y;
+        }
+        break;
+      default:
+        result = "<span class='error'>Error: invalid operator</span>";
+        isError = true;
+    }
+  }
+ 
+  document.write(
+    "<tr><td>" + xInput + "</td><td>" + operator + "</td><td>" + yInput +
+    "</td><td>" + result + "</td></tr>"
+  );
+ 
+  if (!isError) {
+    validResults.push(result);
+  }
+}
+ 
+document.write("</table>");
+ 
+// Build the summary table from valid (non-error) results
+document.write("<h2>Summary</h2>");
+document.write("<table>");
+document.write("<tr><th>Minimum</th><th>Maximum</th><th>Average</th><th>Total</th></tr>");
+ 
+if (validResults.length > 0) {
+  var min = Math.min.apply(null, validResults);
+  var max = Math.max.apply(null, validResults);
+  var total = validResults.reduce(function (sum, val) {
+    return sum + val;
+  }, 0);
+  var avg = total / validResults.length;
+ 
+  document.write(
+    "<tr><td>" + min + "</td><td>" + max + "</td><td>" + avg.toFixed(2) +
+    "</td><td>" + total + "</td></tr>"
+  );
+} else {
+  document.write(
+    "<tr><td colspan='4'>No valid results were calculated.</td></tr>"
+  );
+}
+ 
+document.write("</table>");
